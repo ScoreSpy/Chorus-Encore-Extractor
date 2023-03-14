@@ -8,7 +8,7 @@ import yargs from 'yargs'
 const isPackaged = Boolean(process.pkg)
 
 async function start () {
-  console.log('Chorus Encore Validator - 14/03/2023')
+  console.log('Chorus Encore Extractor - 14/03/2023')
 
   // eslint-disable-next-line init-declarations
   let appArguments: ApplicationArguments
