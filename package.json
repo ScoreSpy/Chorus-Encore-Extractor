@@ -1,5 +1,5 @@
 {
-  "name": "chorus-encore-validator",
+  "name": "chorus-encore-extractor",
   "scripts": {
     "build": "npx tsc",
     "clean": "gts clean",
@@ -32,6 +32,6 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-
+    "jszip": "^3.10.1"
   }
 }
