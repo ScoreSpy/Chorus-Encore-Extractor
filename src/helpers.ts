@@ -1,7 +1,8 @@
 import { access, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
-import { basename, dirname, extname, join } from 'node:path'
+import { basename, dirname, extname, join, normalize } from 'node:path'
 import { constants as FS_CONSTANTS } from 'node:fs'
 import { createDecipheriv } from 'node:crypto'
+import { createInterface } from 'node:readline'
 import cryptoConfig from './config/crypto.json'
 import JSZip from 'jszip'
 
@@ -43,11 +44,30 @@ export async function findCEFiles (dirPath: string, files: string[]): Promise<st
 export function replacePathPart (filePath: string, oldPart: string, newPart: string): string {
   const dir = dirname(filePath)
   const base = basename(filePath)
-  const newDir = dir.replace(oldPart, newPart)
+  const newDir = dir.replace(normalize(oldPart), normalize(newPart))
   const newPath = join(newDir, base)
   return newPath
 }
 
 export function fileExists (path: string): Promise<boolean> {
   return access(path, FS_CONSTANTS.F_OK).then(() => true).catch(() => false)
+}
+
+export function askQuestion (question: string, expected: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const rl = createInterface(process.stdin, process.stdout)
+    rl.question(`${question}\n`, (answer) => {
+      if (answer.toLowerCase() !== expected.toLowerCase()) { return reject(new Error('invalid input')) }
+      return resolve()
+    })
+  })
+}
+
+export function keyPress (): Promise<void> {
+  console.log('\nPress Any Key To Exit')
+  process.stdin.setRawMode(true)
+  return new Promise(() => process.stdin.once('data', () => {
+    console.log('\n^C')
+    process.exit(1)
+  }))
 }
